@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.seata.sample</groupId>
-		<artifactId>springcloud-eureka-seata-tcc</artifactId>
+		<artifactId>springcloud-eureka-seata-saga</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 

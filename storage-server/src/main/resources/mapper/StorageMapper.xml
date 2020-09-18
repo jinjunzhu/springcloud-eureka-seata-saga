@@ -11,4 +11,8 @@
   <update id="decrease">
     UPDATE storage SET used = used + #{count},residue = residue - #{count} WHERE product_id = #{productId}
   </update>
+
+  <update id="compensateDecrease">
+    UPDATE storage SET used = used - #{count},residue = residue + #{count} WHERE product_id = #{productId}
+  </update>
 </mapper>

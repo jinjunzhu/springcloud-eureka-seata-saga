@@ -1,0 +1,150 @@
+{
+    "Name": "buyGoodsOnline",
+    "Comment": "buy a goods on line, add order, deduct account, deduct storage ",
+    "StartState": "SaveOrder",
+    "Version": "0.0.1",
+    "States": {
+        "SaveOrder": {
+            "Type": "ServiceTask",
+            "ServiceName": "orderSave",
+            "ServiceMethod": "saveOrder",
+            "CompensateState": "DeleteOrder",
+            "Next": "ChoiceAccountState",
+            "Input": [
+                "$.[businessKey]",
+                "$.[order]"
+            ],
+            "Output": {
+                "SaveOrderResult": "$.#root"
+            },
+            "Status": {
+                "#root == true": "SU",
+                "#root == false": "FA",
+                "$Exception{java.lang.Throwable}": "UN"
+            }
+        },
+        "ChoiceAccountState":{
+            "Type": "Choice",
+            "Choices":[
+                {
+                    "Expression":"[SaveOrderResult] == true",
+                    "Next":"ReduceAccount"
+                }
+            ],
+            "Default":"Fail"
+        },
+        "ReduceAccount": {
+            "Type": "ServiceTask",
+            "ServiceName": "accountService",
+            "ServiceMethod": "decrease",
+            "CompensateState": "CompensateReduceAccount",
+            "Next": "ChoiceStorageState",
+            "Input": [
+                "$.[businessKey]",
+                "$.[userId]",
+                "$.[money]",
+                {
+                    "throwException" : "$.[mockReduceAccountFail]"
+                }
+            ],
+            "Output": {
+                "ReduceAccountResult": "$.#root"
+            },
+            "Status": {
+                "#root == true": "SU",
+                "#root == false": "FA",
+                "$Exception{java.lang.Throwable}": "UN"
+            },
+            "Catch": [
+                {
+                    "Exceptions": [
+                        "java.lang.Throwable"
+                    ],
+                    "Next": "CompensationTrigger"
+                }
+            ]
+        },
+        "ChoiceStorageState":{
+            "Type": "Choice",
+            "Choices":[
+                {
+                    "Expression":"[ReduceAccountResult] == true",
+                    "Next":"ReduceStorage"
+                }
+            ],
+            "Default":"Fail"
+        },
+        "ReduceStorage": {
+            "Type": "ServiceTask",
+            "ServiceName": "storageService",
+            "ServiceMethod": "decrease",
+            "CompensateState": "CompensateReduceStorage",
+            "Input": [
+                "$.[businessKey]",
+                "$.[productId]",
+                "$.[count]",
+                {
+                    "throwException" : "$.[mockReduceStorageFail]"
+                }
+            ],
+            "Output": {
+                "ReduceStorageResult": "$.#root"
+            },
+            "Status": {
+                "#root == true": "SU",
+                "#root == false": "FA",
+                "$Exception{java.lang.Throwable}": "UN"
+            },
+            "Catch": [
+                {
+                    "Exceptions": [
+                        "java.lang.Throwable"
+                    ],
+                    "Next": "CompensationTrigger"
+                }
+            ],
+            "Next": "Succeed"
+        },
+        "DeleteOrder": {
+            "Type": "ServiceTask",
+            "ServiceName": "orderSave",
+            "ServiceMethod": "deleteOrder",
+            "Input": [
+                "$.[businessKey]",
+                "$.[order]"
+            ]
+        },
+        "CompensateReduceAccount": {
+            "Type": "ServiceTask",
+            "ServiceName": "accountService",
+            "ServiceMethod": "compensateDecrease",
+            "Input": [
+                "$.[businessKey]",
+                "$.[userId]",
+                "$.[money]"
+            ]
+        },
+        "CompensateReduceStorage": {
+            "Type": "ServiceTask",
+            "ServiceName": "storageService",
+            "ServiceMethod": "compensateDecrease",
+            "Input": [
+                "$.[businessKey]",
+                "$.[productId]",
+                "$.[count]"
+            ]
+        },
+        "CompensationTrigger": {
+            "Type": "CompensationTrigger",
+            "Next": "Fail"
+        },
+        "Succeed": {
+            "Type":"Succeed"
+        },
+        "Fail": {
+            "Type":"Fail",
+            "ErrorCode": "PURCHASE_FAILED",
+            "Message": "purchase failed"
+        }
+    }
+}

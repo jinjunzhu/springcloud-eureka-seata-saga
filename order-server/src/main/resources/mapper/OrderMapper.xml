@@ -9,12 +9,16 @@
     <result column="pay_amount" property="payAmount" jdbcType="DECIMAL" />
     <result column="status" property="status" jdbcType="INTEGER" />
   </resultMap>
-  <insert id="create">
+  <insert id="create" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
      INSERT INTO `orders` (`id`,`user_id`,`product_id`,`count`,`pay_amount`,`status`) VALUES(NULL, #{userId}, #{productId}, #{count}, #{payAmount},0);
   </insert>
 
   <update id="update">
     UPDATE `orders` SET pay_amount = pay_amount - #{payAmount},status = 1
     where user_id = #{userId} and status = #{status};
+  </update>
+
+  <update id="delete">
+    delete from orders where id=#{id}
   </update>
 </mapper>

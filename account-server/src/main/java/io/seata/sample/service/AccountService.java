@@ -9,26 +9,18 @@ public interface AccountService {
 
     /**
      * 扣减账户余额
-     * @param xid the global transactionId
      * @param userId 用户id
      * @param money 金额
      * @return prepare是否成功
      */
-    boolean decrease(String xid, Long userId, BigDecimal money);
+    boolean decrease(Long userId, BigDecimal money);
 
     /**
      * Commit boolean.
      *
-     * @param xid the global transactionId
+     * @param userId 用户id
+     * @param money 金额
      * @return the boolean
      */
-    boolean commit(String xid);
-
-    /**
-     * Rollback boolean.
-     *
-     * @param xid the global transactionId
-     * @return the boolean
-     */
-    boolean rollback(String xid);
+    boolean compensateDecrease(Long userId, BigDecimal money);
 }

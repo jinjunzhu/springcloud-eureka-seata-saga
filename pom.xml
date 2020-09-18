@@ -9,10 +9,10 @@
 		<relativePath/>
 	</parent>
 	<groupId>io.seata.sample</groupId>
-	<artifactId>springcloud-eureka-seata-tcc</artifactId>
+	<artifactId>springcloud-eureka-seata-saga</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>springcloud-eureka-seata-tcc</name>
+	<name>springcloud-eureka-seata-saga</name>
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
@@ -53,13 +53,6 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
 		</dependency>
-		<!--druid-->
-		<!--<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid-spring-boot-starter</artifactId>
-			<version>${druid-spring-boot-starter.version}</version>
-		</dependency>-->
-		<!--lombok-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

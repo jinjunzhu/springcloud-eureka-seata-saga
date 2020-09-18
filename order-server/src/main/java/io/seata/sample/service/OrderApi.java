@@ -1,27 +1,16 @@
 package io.seata.sample.service;
 
-import io.seata.rm.tcc.api.BusinessActionContext;
 import io.seata.rm.tcc.api.LocalTCC;
-import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
 import io.seata.sample.entity.Order;
 
-@LocalTCC
 public interface OrderApi {
 
-    @TwoPhaseBusinessAction(name = "orderApi", commitMethod = "commit", rollbackMethod = "rollback")
-    boolean saveOrder(BusinessActionContext actionContext, Order order);
+    boolean saveOrder(String businessKey, Order order);
 
     /**
-     * 提交事务
-     * @param actionContext save xid
+     * 失败补偿，删除订单
+     * @param order order
      * @return
      */
-    boolean commit(BusinessActionContext actionContext);
-
-    /**
-     * 回滚事务
-     * @param actionContext save xid
-     * @return
-     */
-    boolean rollback(BusinessActionContext actionContext);
+    boolean deleteOrder(String businessKey, Order order);
 }

@@ -23,35 +23,15 @@ public class AccountController {
     @Resource
     private AccountService accountServiceImpl;
 
-    /**
-     * 扣减账户余额
-     * actionContext save xid
-     * @param userId 用户id
-     * @param money 金额
-     * @return
-     */
     @RequestMapping("decrease")
-    public boolean prepare(@RequestBody BusinessActionContext actionContext, @RequestParam("userId") Long userId, @RequestParam("money") BigDecimal money){
-        return accountServiceImpl.decrease(actionContext.getXid(), userId,money);
+    public boolean decrease(@RequestParam("businessKey") String businessKey, @RequestParam("userId") Long userId, @RequestParam("money") BigDecimal money){
+        logger.info("businessKey:{}", businessKey);
+        return accountServiceImpl.decrease(userId,money);
     }
 
-    @RequestMapping("commit")
-    public boolean commit(@RequestBody BusinessActionContext actionContext){
-        try {
-            return accountServiceImpl.commit(actionContext.getXid());
-        }catch (IllegalStateException e){
-            logger.error("commit error:", e);
-            return true;
-        }
-    }
-
-    @RequestMapping("rollback")
-    public boolean rollback(@RequestBody BusinessActionContext actionContext){
-        try {
-            return accountServiceImpl.rollback(actionContext.getXid());
-        }catch (IllegalStateException e){
-            logger.error("rollback error:", e);
-            return true;
-        }
+    @RequestMapping("compensateDecrease")
+    public boolean compensateDecrease(@RequestParam("businessKey") String businessKey, @RequestParam("userId") Long userId, @RequestParam("money") BigDecimal money){
+        logger.info("businessKey:{}", businessKey);
+        return accountServiceImpl.compensateDecrease(userId, money);
     }
 }

@@ -24,4 +24,6 @@ public interface OrderDao {
      * @param payAmount
      */
     void update(@Param("userId") Long userId,@Param("payAmount") BigDecimal payAmount, @Param("status") Integer status);
+
+    void delete(Order order);
 }

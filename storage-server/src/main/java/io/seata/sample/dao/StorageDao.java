@@ -16,4 +16,12 @@ public interface StorageDao {
      * @return
      */
     void decrease(@Param("productId") Long productId, @Param("count") Integer count);
+
+    /**
+     * 补偿扣减库存
+     * @param productId 产品id
+     * @param count 数量
+     * @return
+     */
+    void compensateDecrease(@Param("productId") Long productId, @Param("count") Integer count);
 }

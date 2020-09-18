@@ -12,32 +12,25 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author jinjunzhu
  */
 @FeignClient(value = "storage-server")
-@LocalTCC
 public interface StorageApi {
 
     /**
      * 扣减库存
-     * @param productId
-     * @param count
+     * @param businessKey businessKey
+     * @param productId productId
+     * @param count count
      * @returns
      */
-    @TwoPhaseBusinessAction(name = "storageApi", commitMethod = "commit", rollbackMethod = "rollback")
     @GetMapping(value = "/storage/decrease")
-    boolean decrease(@RequestBody BusinessActionContext actionContext, @RequestParam("productId") Long productId, @RequestParam("count") Integer count);
+    boolean decrease(@RequestParam("businessKey") String businessKey, @RequestParam("productId") Long productId, @RequestParam("count") Integer count);
 
     /**
-     * 提交事务
-     * @param actionContext save xid
+     * 补偿扣减库存
+     * @param businessKey businessKey
+     * @param productId productId
+     * @param count count
      * @return
      */
-    @GetMapping(value = "/storage/commit")
-    boolean commit(@RequestBody BusinessActionContext actionContext);
-
-    /**
-     * 回滚事务
-     * @param actionContext save xid
-     * @return
-     */
-    @GetMapping(value = "/storage/rollback")
-    boolean rollback(@RequestBody BusinessActionContext actionContext);
+    @GetMapping(value = "/storage/compensateDecrease")
+    boolean compensateDecrease(@RequestParam("businessKey") String businessKey, @RequestParam("productId") Long productId, @RequestParam("count") Integer count);
 }
