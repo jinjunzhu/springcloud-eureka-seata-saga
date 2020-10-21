@@ -16,8 +16,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 /**
- * 数据源代理
- * @author wangzhongxiang
+ * @author jinjunzhu
  */
 @Configuration
 public class DataSourceConfiguration {

@@ -21,7 +21,8 @@ public class StorageServiceImpl implements StorageService {
     public boolean decrease(Long productId, Integer count) {
         LOGGER.info("扣减库存, commit, productId:{}, count:{}", productId, count);
         storageDao.decrease(productId, count);
-        throw new RuntimeException();
+        //throw new RuntimeException();
+        return true;
     }
 
     @Override

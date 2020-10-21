@@ -6,16 +6,17 @@ import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 /**
- * 数据源代理
- * @author wangzhongxiang
+ * @author jinjunzhu
  */
 @Configuration
 public class DataSourceConfiguration {
@@ -26,20 +27,19 @@ public class DataSourceConfiguration {
         return DataSourceBuilder.create().build();
     }
 
+    @Bean(name = "transactionManager")
     @Primary
-    @Bean("dataSource")
-    public DataSourceProxy dataSource(DataSource hikariDataSource){
-        return new DataSourceProxy(hikariDataSource);
+    public DataSourceTransactionManager transactionManager(@Qualifier("hikariDataSource") DataSource hikariDataSource) {
+        return new DataSourceTransactionManager(hikariDataSource);
     }
 
     @Bean
-    public SqlSessionFactory sqlSessionFactory(DataSourceProxy dataSourceProxy)throws Exception{
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSourceProxy);
-        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver()
-                .getResources("classpath*:/mapper/*.xml"));
-        sqlSessionFactoryBean.setTransactionFactory(new SpringManagedTransactionFactory());
-        return sqlSessionFactoryBean.getObject();
+    public SqlSessionFactory sqlSessionFactory(DataSource hikariDataSource)throws Exception{
+        SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+        bean.setDataSource(hikariDataSource);
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml"));
+        bean.setTransactionFactory(new SpringManagedTransactionFactory());
+        return bean.getObject();
     }
 
 }
